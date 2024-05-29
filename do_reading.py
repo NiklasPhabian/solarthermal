@@ -18,7 +18,6 @@ def thermal_power(t1, t2, f):
     power = (t1-t2) * f * cp # in J/s = W
     return power
 
-
 temp_sensor1_id = '28-3ce1d4438ff7'
 temp_sensor2_id = '28-3ce1d4432b6f'
 temp_sensor3_id = '28-3ce1d44312b4'
@@ -41,6 +40,8 @@ cursor = conn.cursor()
 
 # controller will read the state it has been in for the previous step
 cont = controller.Controller(cursor)
+cont.get_seconds_since_on()
+cont.get_state()    
 cont.control(power=power, t_ambient=t3)
 
 row = { 'timestamp': now,
@@ -55,8 +56,6 @@ row = { 'timestamp': now,
 cursor.execute('''INSERT INTO solarthermal (timestamp, temp1, temp2, temp3, flow, power, pump)
                 VALUES (:timestamp, :temp1, :temp2, :temp3, :flow, :power, :pump)''',
                row)
-
-# Decide if we should turn on or off
 
 conn.commit()
 conn.close()

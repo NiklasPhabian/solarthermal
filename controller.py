@@ -3,16 +3,14 @@ import datetime
 
 class Controller:
     
-    def __init__(self, cursor):
+    def __init__(self, cursor=None):
         self.channel = 22
         GPIO.setwarnings(True)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.channel, GPIO.OUT)
         self.pump_on = None
         self.cursor = cursor
-        self.get_seconds_since_on()
-        self.get_state()
-        
+
     def get_state(self):
         query = 'SELECT pump FROM solarthermal ORDER BY timestamp DESC LIMIT 1'
         self.cursor.execute(query)
@@ -32,7 +30,7 @@ class Controller:
         elif t_ambient < 5:
             print("Ambient temp below 5 C. Turning off")
             self.turn_off()
-        elif self.pump_on==False and self.seconds_since_on > 60*30:
+        elif self.pump_on==False and self.seconds_since_on > 60*60:
             print("Wait expired. Turning on")
             self.turn_on()
     
